@@ -51,8 +51,8 @@ With the following software and hardware list you can run all code files present
 | Chapter | Software required | OS required |
 | -------- | ------------------------------------ | ----------------------------------- |
 | 1-10 | sdkman (for Java 17) (https://sdkman.io) | Windows, Mac OS X, and Linux (Any) |
-| 1-10 | IntelliJ IDEA (https://springbootlearning.com/ | Windows, Mac OS X, and Linux (Any) |
-| 1-10 | VS Code (https://springbootlearning.com/ | Windows, Mac OS X, and Linux (Any) |
+| 1-10 | IntelliJ IDEA (https://springbootlearning.com/intellij-idea) | Windows, Mac OS X, and Linux (Any) |
+| 1-10 | VS Code (https://springbootlearning.com/) | Windows, Mac OS X, and Linux (Any) |
 | 1-10 | Spring Tool Suite (https://springbootlearning.com/sts) | Windows, Mac OS X, and Linux (Any) |
 
 We also provide a PDF file that has color images of the screenshots/diagrams used in this book. [Click here to download it](https://packt.link/FvE6S).
@@ -65,13 +65,93 @@ We also provide a PDF file that has color images of the screenshots/diagrams use
 ## Errata 
 * Page 65, Note box:  **!!putting the wildcard at the beginning!!** _should be_ **!!putting the wildcard at the END!!**
 * Page 65, Note box:  **EndsWith puts the wildcard at the end** _should be_ **EndsWith puts the wildcard at the beginning**
+* In Chapter 4, under the section "Invoking an OAuth2 API remotely," there is a missing code snippet after the provided snippet on pages 108-109.
+
+**Original Code Snippet (Pages 108-109):**
+
+```java
+@Configuration
+public class YouTubeConfig {
+
+  static String YOUTUBE_V3_API = //
+    "https://www.googleapis.com/youtube/v3";
+
+  @Bean
+  WebClient webClient( //
+    OAuth2AuthorizedClientManager clientManager) {
+
+    ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 = //
+      new ServletOAuth2AuthorizedClientExchangeFilterFunction( //
+        clientManager);
+    oauth2.setDefaultClientRegistrationId("google");
+
+    return WebClient.builder() //
+      .baseUrl(YOUTUBE_V3_API) //
+      .apply(oauth2.oauth2Configuration()) //
+      .build();
+  }
+}
+```
+
+**Missing Code Snippet:**
+```
+@Bean
+HttpServiceProxyFactory proxyFactory(WebClient oauth2WebClient) {
+  return HttpServiceProxyFactory.builder() //
+    .clientAdapter(WebClientAdapter.forClient(oauth2WebClient)) //
+    .build();
+}
+
+@Bean
+YouTube client(HttpServiceProxyFactory factory) {
+  return factory.createClient(YouTube.class);
+}
+```
+**Updated Code Snippet (Including Missing Code):**
+```
+@Configuration
+public class YouTubeConfig {
+
+  static String YOUTUBE_V3_API = //
+    "https://www.googleapis.com/youtube/v3";
+
+  @Bean
+  WebClient webClient( //
+    OAuth2AuthorizedClientManager clientManager) {
+
+    ServletOAuth2AuthorizedClientExchangeFilterFunction oauth2 = //
+      new ServletOAuth2AuthorizedClientExchangeFilterFunction( //
+        clientManager);
+    oauth2.setDefaultClientRegistrationId("google");
+
+    return WebClient.builder() //
+      .baseUrl(YOUTUBE_V3_API) //
+      .apply(oauth2.oauth2Configuration()) //
+      .build();
+  }
+
+  @Bean
+  HttpServiceProxyFactory proxyFactory(WebClient oauth2WebClient) {
+    return HttpServiceProxyFactory.builder() //
+      .clientAdapter(WebClientAdapter.forClient(oauth2WebClient)) //
+      .build();
+  }
+
+  @Bean
+  YouTube client(HttpServiceProxyFactory factory) {
+    return factory.createClient(YouTube.class);
+  }
+}
+```
+Please update the `YouTubeConfig.java` file with the above complete code snippet to ensure completeness in configuring the HTTP service proxy and creating the YouTube client.
+
 
 ## Get to Know the Author
-**Greg L. Turnquist** works on the Spring team at VMware. He is the project lead for Spring Data JPA and has committed to multiple projects including Spring Boot, Spring Security, R2DBC, Spring HATEOAS, and more. He has written the Hacking with Spring Boot series as well as Packt's best-selling title, Learning Spring Boot 2.0 2nd Edition. He co-founded the Nashville Java User Group in 2010 and hasn't met a Java app (yet) that he doesn't like.
+**Greg L. Turnquist** is a senior staff technical content engineer at Cockroach Labs and was a former developer on the Spring team. He was the project lead for Spring Data JPA and has committed to multiple projects including Spring Boot, Spring Security, R2DBC, Spring HATEOAS, and more. He has written the _Hacking with Spring Boot_ series as well as Packt's best-selling title, _Learning Spring Boot 2.0 2nd Edition_. He co-founded the Nashville Java User Group in 2010 and hasn't met a Java app (yet) that he doesn't like.
 
 He completed his master's degree in computer engineering at Auburn University and lives in the United States with his family.
 
-Be sure to check out his YouTube channel, Spring Boot Learning, where you learn about Spring Boot and have fun doing it at youtube.com/@springbootlearning
+Be sure to check out his YouTube channel, [Pro Coder](https://youtube.com/@ProCoderIO), where you learn to become a savvy pro!
 
 ### Download a free PDF
 
